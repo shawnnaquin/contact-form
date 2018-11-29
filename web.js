@@ -35,11 +35,12 @@ http.createServer( function(request, response) {
 
     if( request.method == 'POST') {
         processPost(request, response, function() {
-            response.writeHead(200, JSON.stringify(request.post), {'Content-Type': 'text/plain'});
+            console.log(request.post);
+            response.writeHead(200, "OK", {'Content-Type': 'text/plain'});
             response.end();
         });
     } else {
-        response.writeHead(200, "else", {'Content-Type': 'text/plain'});
+        response.writeHead(200, "OK", {'Content-Type': 'text/plain'});
         response.end();
     }
 
