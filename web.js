@@ -27,6 +27,7 @@ function processPost(request, response, callback) {
 }
 
 http.createServer(function(request, response) {
+    response.setHeader('Access-Control-Allow-Headers', request.header.origin);
     if(request.method == 'POST') {
         processPost(request, response, function() {
             console.log(request.post);
