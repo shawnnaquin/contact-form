@@ -10,8 +10,8 @@ use Rack::Cors do |config|
 end
 
 set :mail_options, {
-	:to => 'YOUR@EMAIL.COM',
-	:from => 'YOUR@EMAIL.COM',
+	:to => 'shawn.naquin@gmail.com',
+	:from => 'shawn.naquin@gmail.com',
 	:via => :smtp,
 	:via_options => {
 		:address => 'smtp.sendgrid.net',
@@ -38,5 +38,5 @@ post '/send_email' do
   settings.mail_options[:subject] = "New message via contact form"
 
   Pony.mail(settings.mail_options)
-  redirect "http://YOUR_THANK_YOU_URL"
+  # redirect "http://YOUR_THANK_YOU_URL"
 end
