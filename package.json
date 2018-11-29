@@ -1,0 +1,26 @@
+{
+  "name": "contact-form",
+  "version": "1.0.0",
+  "description": "contact form",
+  "main": "web.js",
+  "engines": {
+    "node": "11.x"
+  },
+  "scripts": {
+    "start": "node web.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lepepe/simple-contact-form.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/lepepe/simple-contact-form/issues"
+  },
+  "homepage": "https://github.com/lepepe/simple-contact-form#readme",
+  "dependencies": {
+    "sendgrid": "^5.2.3"
+  }
+}
