@@ -38,5 +38,5 @@ post '/send_email' do
   settings.mail_options[:subject] = "New message via contact form"
 
   Pony.mail(settings.mail_options)
-  redirect "//localhost:8080/"
+  redirect "http://localhost:8080/"
 end
