@@ -33,14 +33,14 @@ http.createServer( function(request, response) {
     response.setHeader('Access-Control-Allow-Methods', 'POST');
     response.setHeader('Access-Control-Allow-Headers', 'multipart/form-data');
 
-    if(request.method == 'POST') {
+    if( request.method == 'POST') {
         processPost(request, response, function() {
             console.log(request.post);
             response.writeHead(200, response.post, {'Content-Type': 'text/plain'});
             response.end();
         });
     } else {
-        response.writeHead(200, "OK", {'Content-Type': 'text/plain'});
+        response.writeHead(200, "else", {'Content-Type': 'text/plain'});
         response.end();
     }
 
