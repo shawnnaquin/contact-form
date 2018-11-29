@@ -35,9 +35,7 @@ http.createServer( function(request, response) {
 
     if( request.method == 'POST') {
         processPost(request, response, function() {
-            for (var pair of request.post.data.entries()) {
-                console.log(pair[0]+ ', ' + pair[1]);
-            }
+            console.log( request.post );
             response.writeHead(200, "OK", {'Content-Type': 'text/plain'});
             response.end();
         });
