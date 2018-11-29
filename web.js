@@ -38,7 +38,7 @@ http.createServer( function(request, response) {
         processPost(request, response, function() {
 
             var form = new multiparty.Form();
-            form.parse(request, function(err, fields, files) {
+            form.parse(request.body, function(err, fields, files) {
                 console.log(fields);
                   response.writeHead(200, "OK", {'Content-Type': 'text/plain'});
                   response.end();
