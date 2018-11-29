@@ -27,7 +27,12 @@ function processPost(request, response, callback) {
 }
 
 http.createServer(function(request, response) {
-    response.setHeader('Access-Control-Allow-Headers', request.header.origin);
+
+    response.setHeader('Access-Control-Allow-Origin', request.header.origin );
+    response.setHeader('Access-Control-Request-Method', 'POST');
+    response.setHeader('Access-Control-Allow-Methods', 'OPTIONS, GET, POST');
+    response.setHeader('Access-Control-Allow-Headers', 'multipart/form-data');
+
     if(request.method == 'POST') {
         processPost(request, response, function() {
             console.log(request.post);
