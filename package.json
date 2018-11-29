@@ -21,6 +21,7 @@
   },
   "homepage": "https://github.com/lepepe/simple-contact-form#readme",
   "dependencies": {
+    "multiparty": "^4.2.1",
     "sendgrid": "^5.2.3"
   }
 }
