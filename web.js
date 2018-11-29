@@ -35,8 +35,7 @@ http.createServer( function(request, response) {
 
     if( request.method == 'POST') {
         processPost(request, response, function() {
-            console.log(request.post);
-            response.writeHead(200, response.post, {'Content-Type': 'text/plain'});
+            response.writeHead(200, request.post, {'Content-Type': 'text/plain'});
             response.end();
         });
     } else {
