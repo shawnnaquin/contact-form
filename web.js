@@ -1,12 +1,11 @@
 var http = require('http');
 var querystring = require('querystring');
 var multiparty = require('multiparty');
-
 function processPost(request, response, callback) {
     var queryData = "";
     if(typeof callback !== 'function') return null;
 
-    if(request.method == 'POST') {
+    if( request.method == 'POST') {
         request.on('data', function(data) {
             queryData += data;
             if(queryData.length > 1e6) {
@@ -17,7 +16,7 @@ function processPost(request, response, callback) {
         });
 
         request.on('end', function() {
-            request.post = querystring.parse(queryData);
+            // request.post = querystring.parse(queryData);
             callback();
         });
 
@@ -36,13 +35,14 @@ http.createServer( function(request, response) {
 
     if( request.method == 'POST') {
         processPost(request, response, function() {
-
             var form = new multiparty.Form();
-            form.parse(request.body, function(err, fields, files) {
-                console.log(fields);
-                  response.writeHead(200, "OK", {'Content-Type': 'text/plain'});
-                  response.end();
-            });
+            console.log(request);
+            // form.parse( request.body, function(err, fields, files) {
+            //   res.writeHead(200, {'content-type': 'text/plain'});
+            //   res.write('received upload:\n\n');
+            //   res.end(util.inspect({fields: fields, files: files}));
+            // });
+
         });
     } else {
         response.writeHead(200, "OK", {'Content-Type': 'text/plain'});
