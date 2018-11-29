@@ -39,7 +39,7 @@ http.createServer(function(request, response) {
         response.end();
     }
 
-}).listen(8000);
+}).listen( process.env.PORT || 80 );
 
 // var helper = require('sendgrid').mail;
 // var from_email = new helper.Email('test@example.com');
