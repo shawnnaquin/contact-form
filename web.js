@@ -13,8 +13,8 @@ function contact(fields) {
     sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
     const msg = {
-      to: email,
-      from: from,
+      to: from,
+      from: email,
       subject: subject,
       text: name + ':\n' + message,
       html: '',
