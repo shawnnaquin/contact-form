@@ -16,8 +16,16 @@ function contact(fields) {
       to: from,
       from: email,
       subject: subject,
-      text: name + message,
-      html: '',
+      content: [
+        {
+          type: 'text/plain',
+          value: name + '\n' + message,
+        }
+        // {
+        //   type: 'text/html',
+        //   value: '<p>Hello HTML world!</p>',
+        // },
+      ]
     };
 
     sgMail.send(msg)
