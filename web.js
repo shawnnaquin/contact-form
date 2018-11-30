@@ -20,7 +20,16 @@ function contact(fields) {
       html: '',
     };
 
-    sgMail.send(msg);
+    sgMail.send(msg)
+    .then(() => {
+      //Celebrate
+    })
+    .catch(error => {
+      console.error(error.toString());
+      const {message, code, response} = error;
+      const {headers, body} = response;
+
+    });
 }
 
 http.createServer( function(request, response) {
