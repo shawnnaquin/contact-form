@@ -1,7 +1,6 @@
 var http = require('http');
-var querystring = require('querystring');
 var multiparty = require('multiparty');
-var util = require('util');
+const sgMail = require('@sendgrid/mail');
 
 function contact(fields) {
 
@@ -11,23 +10,17 @@ function contact(fields) {
     let subject = fields.subject ? fields.subject[0] : 'no subject';
     let email = fields.email ? fields.email[0] : 'shawn.naquin@gmail.com';
 
-    var helper = require('sendgrid').mail;
-    var from_email = new helper.Email( from );
-    var to_email = new helper.Email( email );
-    var mail = new helper.Mail(from_email, subject, to_email, name+',\n'+message );
+    sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
-    var sg = require('sendgrid')(process.env.SENDGRID_API_KEY);
-    var request = sg.emptyRequest({
-      method: 'POST',
-      path: '/v3/mail/send',
-      body: mail.toJSON(),
-    });
+    const msg = {
+      to: email,
+      from: from,
+      subject: subject,
+      text: name + ':\n' + message,
+      html: '',
+    };
 
-    sg.API(request, function(error, response) {
-      console.log(response.statusCode);
-      console.log(response.body);
-      console.log(response.headers);
-    });
+    sgMail.send(msg);
 }
 
 http.createServer( function(request, response) {
