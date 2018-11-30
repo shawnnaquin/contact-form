@@ -3,7 +3,7 @@ var multiparty = require('multiparty');
 const sgMail = require('@sendgrid/mail');
 
 function contact(fields) {
-    console.log(fields);
+
     let from = 'shawn.naquin@gmail.com';
     let name = fields.name ? fields.name[0] : 'no name';
     let message = fields.message ? fields.message[0] : 'no message';
@@ -17,14 +17,14 @@ function contact(fields) {
       from: email,
       subject: subject,
       content: [
-        {
-          type: 'text/plain',
-          value: name + '\n' + message,
-        }
         // {
-        //   type: 'text/html',
-        //   value: '<p>Hello HTML world!</p>',
+        //   type: 'text/plain',
+        //   value: name + '\n' + message,
         // },
+        {
+          type: 'text/html',
+          value: '<h3>'+name+'</h3><p>'+message+'</p>',
+        }
       ]
     };
 
@@ -33,11 +33,11 @@ function contact(fields) {
       //Celebrate
     })
     .catch(error => {
-      console.error(error.toString());
-      const {message, code, response} = error;
-      const {headers, body} = response;
-
+      // console.error(error.toString());
+      // const {message, code, response} = error;
+      // const {headers, body} = response;
     });
+
 }
 
 http.createServer( function(request, response) {
