@@ -3,7 +3,7 @@ var multiparty = require('multiparty');
 const sgMail = require('@sendgrid/mail');
 
 function contact(fields) {
-
+    console.log(fields);
     let from = 'shawn.naquin@gmail.com';
     let name = fields.name ? fields.name[0] : 'no name';
     let message = fields.message ? fields.message[0] : 'no message';
@@ -16,7 +16,7 @@ function contact(fields) {
       to: from,
       from: email,
       subject: subject,
-      text: name + ':\n' + message,
+      text: name + message,
       html: '',
     };
 
