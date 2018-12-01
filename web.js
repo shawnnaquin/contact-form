@@ -1,6 +1,25 @@
 var http = require('http');
 var multiparty = require('multiparty');
 const sgMail = require('@sendgrid/mail');
+const Grecaptcha = require('grecaptcha')
+const client = new Grecaptcha( process.env.RECAPTCHA );
+
+function destroyConnection( error ) {
+    response.writeHead( error, {'Content-Type': 'text/plain'}).end();
+    request.connection.destroy();
+}
+
+function verifyCaptcha(fields,token) {
+
+    if ( await client.verify( token ) ) {
+        contact(fields);
+    }
+    else {
+        destroyConnection( 429 );
+    }
+
+}
+
 
 function contact(fields) {
 
@@ -30,12 +49,17 @@ function contact(fields) {
 
     sgMail.send(msg)
     .then(() => {
-      //Celebrate
+
+      response.writeHead(200, "OK", {'Content-Type': 'text/plain'});
+      response.end();
+
     })
     .catch(error => {
-      // console.error(error.toString());
-      // const {message, code, response} = error;
-      // const {headers, body} = response;
+        // console.error(error.toString());
+        // const {message, code, response} = error;
+        // const {headers, body} = response;
+        destroyConnection( 429 );
+
     });
 
 }
@@ -49,25 +73,44 @@ http.createServer( function(request, response) {
     response.setHeader('Access-Control-Allow-Headers', 'multipart/form-data');
 
     if( request.method == 'POST') {
-        var form = new multiparty.Form('multipart/form-data');
-        var queryData = "";
+
+        let queryData = '';
+        let token = ''; // get token
+
+        if ( !token ) {
+            destroyConnection( 429 );
+        }
+
         request.on('data', function(data) {
+
             queryData += data;
-            if(queryData.length > 1e6) {
+
+            if( queryData.length > 1e6 ) {
+
                 queryData = "";
-                response.writeHead(413, {'Content-Type': 'text/plain'}).end();
-                request.connection.destroy();
+                destroyConnection( 419 );
+
+            } else {
+
+                request.on('end', ()=> {
+
+                    var form = new multiparty.Form('multipart/form-data');
+
+                    form.parse(request, function(err, fields, files) {
+                        verifyCaptcha(fields,token);
+                    });
+
+                });
+
             }
-        });
-        form.parse(request, function(err, fields, files) {
-            contact(fields);
-            response.writeHead(200, "OK", {'Content-Type': 'text/plain'});
-            response.end();
+
         });
 
     } else {
+
         response.writeHead(200, "OK", {'Content-Type': 'text/plain'});
         response.end();
+
     }
 
 }).listen( process.env.PORT || 80 );
