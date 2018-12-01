@@ -31,13 +31,13 @@ const contact = (fields) => {
       ]
     };
 
-    sgMail.send(msg)
-    .then(() => {
-      resolve("Stuff worked!");
-    })
-    .catch(error => {
-      reject(Error("It broke"));
-    });
+    sgMail.send( msg )
+        .then( () => {
+          resolve( true );
+        } )
+        .catch( error => {
+          reject( Error(false) );
+        } );
 
   });
 
@@ -50,8 +50,8 @@ http.createServer( function(request, response) {
     response.setHeader('Access-Control-Request-Method', 'POST');
     response.setHeader('Access-Control-Allow-Methods', 'POST');
     response.setHeader('Access-Control-Allow-Headers', 'multipart/form-data');
-    // const client = new Grecaptcha(process.env.RECAPTCHA);
-    console.log( process.env.RECAPTCHA);
+    const client = new Grecaptcha(process.env.RECAPTCHA);
+
     if( request.method == 'POST') {
 
         let queryData = '';
@@ -60,21 +60,30 @@ http.createServer( function(request, response) {
 
         form.parse(request, function(err, fields, files) {
 
-            // client.verify( fields.token[0] ).then((accepted) => {
-            //     if ( accepted ) {
+            client.verify( fields.token[0] ).then((accepted) => {
+                if ( accepted ) {
+                    // google accepted us!
+                    contact(fields).then( go => {
+                        if(go) {
+                            // sendgrid accepted
+                            response.writeHead(200, "OK", {'Content-Type': 'text/plain'});
+                        } else {
+                            // sendgrid rejected
+                            response.writeHead( 429, {'Content-Type': 'text/plain'}).end();
+                        }
+                        response.end();
+                    });
+                }
+                else {
+                    // google rejected
+                    response.writeHead( 429, {'Content-Type': 'text/plain'}).end();
+                    response.end();
+                }
+            }).catch((err) =>  {
+                response.writeHead( 429, {'Content-Type': 'text/plain'}).end();
+                response.end();
 
-            //         contact(fields).then( value => {
-            //             console.log(value);
-            //         });
-            //     }
-            //     else {
-
-            //     }
-
-            // }).catch((err) =>  {
-
-            // })
-
+            })
 
         });
 
@@ -83,9 +92,10 @@ http.createServer( function(request, response) {
             queryData += data;
 
             if( queryData.length > 1e6 ) {
+                // too long;
                 queryData = "";
-            } else {
-
+                response.writeHead( 429, {'Content-Type': 'text/plain'}).end();
+                request.connection.destroy();
             }
 
         });
