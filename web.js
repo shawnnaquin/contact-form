@@ -3,27 +3,9 @@ var multiparty = require('multiparty');
 const sgMail = require('@sendgrid/mail');
 const Grecaptcha = require('grecaptcha')
 
-function destroyConnection( error ) {
-    response.writeHead( error, {'Content-Type': 'text/plain'}).end();
-    request.connection.destroy();
-}
+const contact = (fields) => {
 
-async function verifyCaptcha( fields, token ) {
-
-    // const client = new Grecaptcha( process.env.RECAPTCHA );
-    // const p =  await client.verify( token );
-
-    if ( p ) {
-        contact(fields);
-    }
-    else {
-        destroyConnection( 429 );
-    }
-
-}
-
-
-function contact(fields) {
+  return new Promise((resolve, reject) => {
 
     let from = 'shawn.naquin@gmail.com';
     let name = fields.name ? fields.name[0] : 'no name';
@@ -51,20 +33,15 @@ function contact(fields) {
 
     sgMail.send(msg)
     .then(() => {
-
-      response.writeHead(200, "OK", {'Content-Type': 'text/plain'});
-      response.end();
-
+      resolve("Stuff worked!");
     })
     .catch(error => {
-        // console.error(error.toString());
-        // const {message, code, response} = error;
-        // const {headers, body} = response;
-        destroyConnection( 429 );
-
+      reject(Error("It broke"));
     });
 
-}
+  });
+
+};
 
 http.createServer( function(request, response) {
 
@@ -73,7 +50,8 @@ http.createServer( function(request, response) {
     response.setHeader('Access-Control-Request-Method', 'POST');
     response.setHeader('Access-Control-Allow-Methods', 'POST');
     response.setHeader('Access-Control-Allow-Headers', 'multipart/form-data');
-
+    // const client = new Grecaptcha(process.env.RECAPTCHA);
+    console.log( process.env.RECAPTCHA);
     if( request.method == 'POST') {
 
         let queryData = '';
@@ -81,8 +59,23 @@ http.createServer( function(request, response) {
         var form = new multiparty.Form('multipart/form-data');
 
         form.parse(request, function(err, fields, files) {
-            // verifyCaptcha(fields,token);
-            console.log(fields);
+
+            // client.verify( fields.token[0] ).then((accepted) => {
+            //     if ( accepted ) {
+
+            //         contact(fields).then( value => {
+            //             console.log(value);
+            //         });
+            //     }
+            //     else {
+
+            //     }
+
+            // }).catch((err) =>  {
+
+            // })
+
+
         });
 
         request.on('data', function(data) {
@@ -91,10 +84,8 @@ http.createServer( function(request, response) {
 
             if( queryData.length > 1e6 ) {
                 queryData = "";
-                destroyConnection( 419 );
             } else {
-                console.log('else');
-                console.log(fields);
+
             }
 
         });
