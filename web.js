@@ -2,16 +2,18 @@ var http = require('http');
 var multiparty = require('multiparty');
 const sgMail = require('@sendgrid/mail');
 const Grecaptcha = require('grecaptcha')
-const client = new Grecaptcha( process.env.RECAPTCHA );
 
 function destroyConnection( error ) {
     response.writeHead( error, {'Content-Type': 'text/plain'}).end();
     request.connection.destroy();
 }
 
-function verifyCaptcha(fields,token) {
+async function verifyCaptcha( fields, token ) {
 
-    if ( await client.verify( token ) ) {
+    // const client = new Grecaptcha( process.env.RECAPTCHA );
+    // const p =  await client.verify( token );
+
+    if ( p ) {
         contact(fields);
     }
     else {
@@ -75,36 +77,28 @@ http.createServer( function(request, response) {
     if( request.method == 'POST') {
 
         let queryData = '';
-        let token = ''; // get token
 
-        if ( !token ) {
-            destroyConnection( 429 );
-        }
+        var form = new multiparty.Form('multipart/form-data');
+
+        form.parse(request, function(err, fields, files) {
+            // verifyCaptcha(fields,token);
+            console.log(fields);
+        });
 
         request.on('data', function(data) {
 
             queryData += data;
 
             if( queryData.length > 1e6 ) {
-
                 queryData = "";
                 destroyConnection( 419 );
-
             } else {
-
-                request.on('end', ()=> {
-
-                    var form = new multiparty.Form('multipart/form-data');
-
-                    form.parse(request, function(err, fields, files) {
-                        verifyCaptcha(fields,token);
-                    });
-
-                });
-
+                console.log('else');
+                console.log(fields);
             }
 
         });
+
 
     } else {
 
