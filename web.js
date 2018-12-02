@@ -36,7 +36,7 @@ const contact = (fields) => {
           resolve( true );
         } )
         .catch( error => {
-          reject( Error(false) );
+          reject( new Error( error ) );
         } );
 
   });
@@ -60,30 +60,33 @@ http.createServer( function(request, response) {
 
         form.parse(request, function(err, fields, files) {
 
-            client.verify( fields.token[0] ).then((accepted) => {
-                if ( accepted ) {
-                    // google accepted us!
-                    contact(fields).then( go => {
-                        if(go) {
-                            // sendgrid accepted
-                            response.writeHead(200, "OK", {'Content-Type': 'text/plain'});
-                        } else {
-                            // sendgrid rejected
-                            response.writeHead( 429, {'Content-Type': 'text/plain'}).end();
-                        }
-                        response.end();
-                    });
-                }
-                else {
-                    // google rejected
-                    response.writeHead( 429, {'Content-Type': 'text/plain'}).end();
-                    response.end();
-                }
-            }).catch((err) =>  {
-                response.writeHead( 429, {'Content-Type': 'text/plain'}).end();
-                response.end();
+            client.verify(
+                fields.token[0] )
+                    .then(
+                        (accepted) => {
+                            if ( accepted ) {
+                                // google accepted us!
+                                contact(fields).then( go => {
+                                    if(go) {
+                                        // sendgrid accepted
+                                        response.writeHead(200, "OK", {'Content-Type': 'text/plain'});
+                                        response.end();
+                                    }
+                                }).catch((err)=>{
+                                    // sendgrid rejected
+                                    response.writeHead( 429, {'Content-Type': 'text/plain'}).end();
+                                    response.end();
 
-            })
+                                });
+
+                            }
+                        }
+                    )
+                    .catch((err) =>  {
+                        // google rejected
+                        response.writeHead( 429, {'Content-Type': 'text/plain'}).end();
+                        response.end();
+                    })
 
         });
 
