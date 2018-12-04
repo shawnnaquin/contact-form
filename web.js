@@ -59,7 +59,7 @@ const contact = (fields) => {
 http.createServer( function(request, response) {
 
     response.setHeader('Content-Type', 'multipart/form-data');
-    response.setHeader('Access-Control-Allow-Origin', '*' );
+    response.setHeader('Access-Control-Allow-Origin', 'https://shawnnaquin.github.io' );
     response.setHeader('Access-Control-Request-Method', 'POST');
     response.setHeader('Access-Control-Allow-Methods', 'POST');
     response.setHeader('Access-Control-Allow-Headers', 'multipart/form-data');
@@ -84,16 +84,16 @@ http.createServer( function(request, response) {
             let message = getName( fields.message ? fields.message[0]+'' : 'no message' );
             let subject = getName( fields.subject ? fields.subject[0]+'' : 'no subject' );
             let email = validator.normalizeEmail( fields.email ? fields.email[0]+'' : 'shawn.naquin@gmail.com' );
-            let token = fields.token[0];
+            let token = getName( fields.token[0] );
 
             if ( !validator.isEmail(email) ) {
-                // console.log('hit email');
+
                 response.writeHead( 400, {'Content-Type': 'application/json'} );
                 response.end( JSON.stringify( { "error": "Please enter a valid email.", "type": "email" } ) );
                 return;
             }
 
-            if ( !token ) {
+            if ( !token || !token.length ) {
                 response.writeHead( 400, {'Content-Type': 'application/json'} );
                 response.end( JSON.stringify( { "error": "Did not send reCaptcha token, please check the box.", "type": "recaptcha" } ) );
                 return;
