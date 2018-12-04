@@ -23,6 +23,8 @@
   "dependencies": {
     "@sendgrid/mail": "^6.3.1",
     "grecaptcha": "^1.0.3",
-    "multiparty": "^4.2.1"
+    "multiparty": "^4.2.1",
+    "validator": "^10.9.0",
+    "xss-filters": "^1.2.7"
   }
 }
