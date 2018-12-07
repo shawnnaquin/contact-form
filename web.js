@@ -59,7 +59,7 @@ const contact = (fields) => {
 http.createServer( function(request, response) {
 
     response.setHeader('Content-Type', 'multipart/form-data');
-    response.setHeader('Access-Control-Allow-Origin', 'https://shawnnaquin.github.io' );
+    response.setHeader('Access-Control-Allow-Origin', '*' );
     response.setHeader('Access-Control-Request-Method', 'POST');
     response.setHeader('Access-Control-Allow-Methods', 'POST');
     response.setHeader('Access-Control-Allow-Headers', 'multipart/form-data');
